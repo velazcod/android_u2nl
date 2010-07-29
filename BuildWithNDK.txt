@@ -1,0 +1,6 @@
+building u2nl.c for android:
+
+cd /cygdrive/c/android-ndk-r4b
+
+./build/prebuilt/windows/arm-eabi-4.2.1/bin/arm-eabi-gcc.exe -o /cygdrive/c/software/android/u2nl/u2nl /cygdrive/c/software/android/u2nl/u2nl-with-my-bug-fixes.c -Wl,-rpath-link=./build/platforms/android-5/arch-arm/usr/lib/,-dynamic-linker=/system/bin/linker -L./build/platforms/android-5/arch-arm/usr/lib/ ./build/platforms/android-5/arch-arm/usr/lib/crtbegin_dynamic.o -I./build/platforms/android-5/arch-arm/usr/include -nostdlib -lc
+

@@ -20,6 +20,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 #include <sys/types.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -99,6 +100,7 @@ static int connectHttps(int s, struct sockaddr_in *addr, int c)
 {
 	char buf[512];
 	char *headerend = NULL;
+	int header_length;
 	int len = snprintf(buf, 512, "CONNECT %s:%d HTTP/1.0\r\n\r\n",
 			inet_ntoa(addr->sin_addr),
 			ntohs(addr->sin_port));
@@ -117,9 +119,10 @@ static int connectHttps(int s, struct sockaddr_in *addr, int c)
 		headerend = strstr(buf, "\r\n\r\n");
 	}
 
-	if (headerend + 4 - buf < len) {
+	header_length = headerend + 4 - buf; 
+	if (header_length < len) {
 		if (write(c, headerend + 4,
-					len - (headerend + 4 - buf)) != 0) {
+					len - header_length) != (len - header_length)) {
 			perror("Error writing to client");
 			return -1;
 		}
@@ -232,10 +235,19 @@ static int acceptLoop(int fd)
 				perror("Unable to fork");
 				return -1;
 			case 0:
-				close(fd);
-				newConnection(csock);
-				exit(1);
-			default:
+				switch (fork()) {
+					case -1:
+						perror("Unable to fork");
+						return -1;
+					case 0:   /* grandchild */
+						close(fd);
+						newConnection(csock);
+						exit(1);
+					default:  /* child */
+						exit(0);
+				}
+			default:		/* parent */
+				wait();
 				close(csock);
 				break;
 		}
