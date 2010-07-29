@@ -1,0 +1,10 @@
+u2nl - universal tunnel
+
+u2nl transparently tunnels TCP network connections through a https proxy without
+the need for another host that untunnels the connections.
+
+You need Linux 2.4 (or above) with root access for this.
+
+More instructions:
+
+http://www.reitwiessner.de/programs/u2nl.html
